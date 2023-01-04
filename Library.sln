@@ -5,18 +5,13 @@ VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jobs.Abstractions", "Jobs.Abstractions\Jobs.Abstractions.csproj", "{AC05F642-1EEF-4AB4-A297-B1D8C215E3A9}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Compatibility", "Compatibility", "{DCAE6CB6-5E15-4EDC-8FD4-124D5BA1FDC4}"
-	ProjectSection(SolutionItems) = preProject
-		Compatibility\IsExternalInit.cs = Compatibility\IsExternalInit.cs
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jobs.Server", "Jobs.Server\Jobs.Server.csproj", "{6A680FC1-0B13-4564-AE22-40E9045E1D0B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jobs.Abstractions.Tests", "Jobs.Abstractions.Tests\Jobs.Abstractions.Tests.csproj", "{BD0FEA56-D770-4EB1-AD3C-201C12A2FF70}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jobs.Fakes", "Jobs.Fakes\Jobs.Fakes.csproj", "{FC6136E0-FABD-44E4-AAF3-FF0D4270FB3F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jobs.Fakes", "Jobs.Fakes\Jobs.Fakes.csproj", "{FC6136E0-FABD-44E4-AAF3-FF0D4270FB3F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jobs.Server.Tests", "Jobs.Server.Tests\Jobs.Server.Tests.csproj", "{9356323C-3EB5-4977-B1D8-97CFDB076140}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jobs.Server.Tests", "Jobs.Server.Tests\Jobs.Server.Tests.csproj", "{9356323C-3EB5-4977-B1D8-97CFDB076140}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
