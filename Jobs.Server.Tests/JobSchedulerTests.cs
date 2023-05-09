@@ -7,82 +7,81 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Staticsoft.Jobs.Server.Tests
+namespace Staticsoft.Jobs.Server.Tests;
+
+public class JobSchedulerTests : TestBase<JobScheduler, JobSchedulerServices>
 {
-    public class JobSchedulerTests : TestBase<JobScheduler, JobSchedulerServices>
+    SimpleJob Job
+        => Get<SimpleJob>();
+
+    ControlledNextMinute NextMinute
+        => Get<ControlledNextMinute>();
+
+    [Fact]
+    public async Task DoesNotRunScheduledJobIfCancellationIsRequested()
     {
-        SimpleJob Job
-            => Get<SimpleJob>();
-
-        ControlledNextMinute NextMinute
-            => Get<ControlledNextMinute>();
-
-        [Fact]
-        public async Task DoesNotRunScheduledJobIfCancellationIsRequested()
-        {
-            var source = new CancellationTokenSource();
-            source.Cancel();
-            await SUT.StartAsync(source.Token);
-            NextMinute.Tick();
-            await Task.Delay(100);
-            await SUT.StopAsync(new());
-            Assert.Equal(0, Job.CompletedTimes);
-        }
-
-        [Fact]
-        public async Task DoesNotRunScheduledJobIfScheduledJobIsStoppedBeforeTicking()
-        {
-            await SUT.StartAsync(new());
-            await Task.Delay(100);
-            await SUT.StopAsync(new());
-            Assert.Equal(0, Job.CompletedTimes);
-        }
-
-        [Fact]
-        public async Task RunsScheduledJob()
-        {
-            await SUT.StartAsync(new());
-            NextMinute.Tick();
-            await Task.Delay(100);
-            await SUT.StopAsync(new());
-            Assert.Equal(1, Job.CompletedTimes);
-        }
-
-        [Fact]
-        public async Task RunsScheduledJobTwice()
-        {
-            await SUT.StartAsync(new());
-            NextMinute.Tick();
-            await Task.Delay(100);
-            NextMinute.Tick();
-            await Task.Delay(100);
-            await SUT.StopAsync(new());
-            Assert.Equal(2, Job.CompletedTimes);
-        }
+        var source = new CancellationTokenSource();
+        source.Cancel();
+        await SUT.StartAsync(source.Token);
+        NextMinute.Tick();
+        await Task.Delay(100);
+        await SUT.StopAsync(new());
+        Assert.Equal(0, Job.CompletedTimes);
     }
 
-    public class JobSchedulerServices : UnitServicesBase
+    [Fact]
+    public async Task DoesNotRunScheduledJobIfScheduledJobIsStoppedBeforeTicking()
     {
-        protected override IServiceCollection Services => base.Services
-            .AddSingleton<JobScheduler>()
-            .AddSingleton<JobRunner>()
-            .AddSingleton<Time, UtcTime>()
-            .AddSingleton<SimpleJob>()
-            .ReuseSingleton<Job, SimpleJob>()
-            .AddSingleton<ControlledNextMinute>()
-            .ReuseSingleton<NextMinute, ControlledNextMinute>();
+        await SUT.StartAsync(new());
+        await Task.Delay(100);
+        await SUT.StopAsync(new());
+        Assert.Equal(0, Job.CompletedTimes);
     }
 
-    public class SimpleJob : Job
+    [Fact]
+    public async Task RunsScheduledJob()
     {
-        public int CompletedTimes { get; private set; } = 0;
+        await SUT.StartAsync(new());
+        NextMinute.Tick();
+        await Task.Delay(100);
+        await SUT.StopAsync(new());
+        Assert.Equal(1, Job.CompletedTimes);
+    }
 
-        public Schedule Schedule { get; } = new Schedule();
+    [Fact]
+    public async Task RunsScheduledJobTwice()
+    {
+        await SUT.StartAsync(new());
+        NextMinute.Tick();
+        await Task.Delay(100);
+        NextMinute.Tick();
+        await Task.Delay(100);
+        await SUT.StopAsync(new());
+        Assert.Equal(2, Job.CompletedTimes);
+    }
+}
 
-        public Task Run()
-        {
-            CompletedTimes++;
-            return Task.CompletedTask;
-        }
+public class JobSchedulerServices : UnitServicesBase
+{
+    protected override IServiceCollection Services => base.Services
+        .AddSingleton<JobScheduler>()
+        .AddSingleton<JobRunner>()
+        .AddSingleton<Time, UtcTime>()
+        .AddSingleton<SimpleJob>()
+        .ReuseSingleton<Job, SimpleJob>()
+        .AddSingleton<ControlledNextMinute>()
+        .ReuseSingleton<NextMinute, ControlledNextMinute>();
+}
+
+public class SimpleJob : Job
+{
+    public int CompletedTimes { get; private set; } = 0;
+
+    public Schedule Schedule { get; } = new Schedule();
+
+    public Task Run()
+    {
+        CompletedTimes++;
+        return Task.CompletedTask;
     }
 }

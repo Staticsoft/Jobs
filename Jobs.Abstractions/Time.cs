@@ -1,8 +1,7 @@
-﻿namespace Staticsoft.Jobs.Abstractions
+﻿namespace Staticsoft.Jobs.Abstractions;
+
+public interface Time
 {
-    public interface Time
-    {
-        int Minute { get; }
-        int Hour { get; }
-    }
+    int Minute { get; }
+    int Hour { get; }
 }

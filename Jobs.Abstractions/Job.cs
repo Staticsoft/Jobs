@@ -1,10 +1,9 @@
 ﻿using System.Threading.Tasks;
 
-namespace Staticsoft.Jobs.Abstractions
+namespace Staticsoft.Jobs.Abstractions;
+
+public interface Job
 {
-    public interface Job
-    {
-        Task Run();
-        Schedule Schedule { get; }
-    }
+    Task Run();
+    Schedule Schedule { get; }
 }
