@@ -2,21 +2,20 @@
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Staticsoft.Jobs.Abstractions
+namespace Staticsoft.Jobs.Abstractions;
+
+public class JobRunner
 {
-    public class JobRunner
-    {
-        readonly Time Time;
-        readonly IEnumerable<Job> Jobs;
+    readonly Time Time;
+    readonly IEnumerable<Job> Jobs;
 
-        public JobRunner(Time time, IEnumerable<Job> jobs)
-            => (Time, Jobs) = (time, jobs);
+    public JobRunner(Time time, IEnumerable<Job> jobs)
+        => (Time, Jobs) = (time, jobs);
 
-        public Task Run()
-            => Task.WhenAll(Jobs.Where(OnSchedule).Select(job => job.Run()));
+    public Task Run()
+        => Task.WhenAll(Jobs.Where(OnSchedule).Select(job => job.Run()));
 
-        bool OnSchedule(Job job)
-            => Time.Minute % job.Schedule.Minutes == 0
-            && Time.Hour % job.Schedule.Hours == 0;
-    }
+    bool OnSchedule(Job job)
+        => Time.Minute % job.Schedule.Minutes == 0
+        && Time.Hour % job.Schedule.Hours == 0;
 }
