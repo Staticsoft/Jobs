@@ -6,8 +6,19 @@ using Xunit;
 
 namespace Staticsoft.Jobs.Abstractions.Tests;
 
-public class JobRunnerTests : TestBase<JobRunner, JobServices>
+public class JobRunnerTests : TestBase<JobRunner>
 {
+    protected override IServiceCollection Services => base.Services
+        .AddSingleton<JobRunner>()
+        .AddSingleton<EachMinuteJob>()
+        .ReuseSingleton<Job, EachMinuteJob>()
+        .AddSingleton<EachSecondMinuteJob>()
+        .ReuseSingleton<Job, EachSecondMinuteJob>()
+        .AddSingleton<EachThirdMinuteJob>()
+        .ReuseSingleton<Job, EachThirdMinuteJob>()
+        .AddSingleton<TimeFake>()
+        .ReuseSingleton<Time, TimeFake>();
+
     TimeFake Time
         => Get<TimeFake>();
 
@@ -50,20 +61,6 @@ public class JobRunnerTests : TestBase<JobRunner, JobServices>
         var eachThirdMinuteJob = Get<EachThirdMinuteJob>();
         Assert.True(eachThirdMinuteJob.Completed);
     }
-}
-
-public class JobServices : UnitServicesBase
-{
-    protected override IServiceCollection Services => base.Services
-        .AddSingleton<JobRunner>()
-        .AddSingleton<EachMinuteJob>()
-        .ReuseSingleton<Job, EachMinuteJob>()
-        .AddSingleton<EachSecondMinuteJob>()
-        .ReuseSingleton<Job, EachSecondMinuteJob>()
-        .AddSingleton<EachThirdMinuteJob>()
-        .ReuseSingleton<Job, EachThirdMinuteJob>()
-        .AddSingleton<TimeFake>()
-        .ReuseSingleton<Time, TimeFake>();
 }
 
 public class EachMinuteJob : SimpleJob { }

@@ -9,8 +9,17 @@ using Xunit;
 
 namespace Staticsoft.Jobs.Server.Tests;
 
-public class JobSchedulerTests : TestBase<JobScheduler, JobSchedulerServices>
+public class JobSchedulerTests : TestBase<JobScheduler>
 {
+    protected override IServiceCollection Services => base.Services
+        .AddSingleton<JobScheduler>()
+        .AddSingleton<JobRunner>()
+        .AddSingleton<Time, UtcTime>()
+        .AddSingleton<SimpleJob>()
+        .ReuseSingleton<Job, SimpleJob>()
+        .AddSingleton<ControlledNextMinute>()
+        .ReuseSingleton<NextMinute, ControlledNextMinute>();
+
     SimpleJob Job
         => Get<SimpleJob>();
 
@@ -59,18 +68,6 @@ public class JobSchedulerTests : TestBase<JobScheduler, JobSchedulerServices>
         await SUT.StopAsync(new());
         Assert.Equal(2, Job.CompletedTimes);
     }
-}
-
-public class JobSchedulerServices : UnitServicesBase
-{
-    protected override IServiceCollection Services => base.Services
-        .AddSingleton<JobScheduler>()
-        .AddSingleton<JobRunner>()
-        .AddSingleton<Time, UtcTime>()
-        .AddSingleton<SimpleJob>()
-        .ReuseSingleton<Job, SimpleJob>()
-        .AddSingleton<ControlledNextMinute>()
-        .ReuseSingleton<NextMinute, ControlledNextMinute>();
 }
 
 public class SimpleJob : Job
